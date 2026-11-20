@@ -40,20 +40,20 @@ tool needs it.
 
 **Purpose**: Initialize the uv project, its tooling and its skeleton.
 
-- [ ] T001 Initialize the uv package project at the repository root by running `uv init --package --name entrepataseturnos-mcp --python 3.13`.
+- [X] T001 Initialize the uv package project at the repository root by running `uv init --package --name entrepataseturnos-mcp --python 3.13`.
   - Resulting files: `pyproject.toml`, `.python-version` (3.13) and `src/entrepataseturnos_mcp/__init__.py`.
   - Set `[project.scripts] entrepataseturnos-mcp = "entrepataseturnos_mcp.__main__:main"`.
-- [ ] T002 Add the runtime dependencies to `pyproject.toml`: `uv add "mcp>=2.3,<3" "httpx>=0.28" "pydantic>=2.12" "pydantic-settings>=2.16" "redis>=8.1" "cryptography>=50" "uvicorn>=0.54"`.
+- [X] T002 Add the runtime dependencies to `pyproject.toml`: `uv add "mcp>=2.3,<3" "httpx>=0.28" "pydantic>=2.12" "pydantic-settings>=2.16" "redis>=8.1" "cryptography>=50" "uvicorn>=0.54"`.
   - Then add the dev dependencies: `uv add --dev "pytest>=9" "respx>=0.23" "fakeredis>=2.40" ruff mypy`.
   - Commit the generated `uv.lock`.
-- [ ] T003 [P] Configure the tools in `pyproject.toml`.
+- [X] T003 [P] Configure the tools in `pyproject.toml`.
   - `[tool.ruff]`: line-length 100, target py313; lint rules `E,F,I,B,UP,S,ASYNC`.
   - `[tool.mypy]`: strict, `files = ["src"]`.
   - `[tool.pytest.ini_options]`: `testpaths = ["tests"]`, the anyio marker, `-ra`.
-- [ ] T004 [P] Create `.gitignore` (`.venv/`, `.env`, `.env.*` except `!.env.example`, `__pycache__/`, `.mypy_cache/`, `.pytest_cache/`, `.ruff_cache/`).
+- [X] T004 [P] Create `.gitignore` (`.venv/`, `.env`, `.env.*` except `!.env.example`, `__pycache__/`, `.mypy_cache/`, `.pytest_cache/`, `.ruff_cache/`).
   - Create `.dockerignore`, which also excludes `tests/`, `specs/`, `.specify/`, `.claude/` and `deploy/`.
   - Create `.env.example`. It lists every `MCP_*` variable from DM §1. Non-secret variables get sample values. Secret variables are left empty.
-- [ ] T005 [P] Create a `Makefile` with these targets (`TAG ?= latest`, `IMAGE := entrepataseturnos/entrepataseturnos-mcp-server`):
+- [X] T005 [P] Create a `Makefile` with these targets (`TAG ?= latest`, `IMAGE := entrepataseturnos/entrepataseturnos-mcp-server`):
   - `sync` (`uv sync`)
   - `lint` (`uv run ruff check . && uv run ruff format --check . && uv run mypy`)
   - `test` (`uv run pytest`)
@@ -61,7 +61,7 @@ tool needs it.
   - `image` (`docker build -t $(IMAGE):$(TAG) .`)
   - `docker-run` (`docker run --rm --env-file .env -p 8000:8000 $(IMAGE):$(TAG)`)
   - `deploy` (`kubectl apply -k deploy/k8s`)
-- [ ] T006 [P] Create empty package modules `src/entrepataseturnos_mcp/api/__init__.py`, `src/entrepataseturnos_mcp/auth/__init__.py` and `src/entrepataseturnos_mcp/tools/__init__.py`.
+- [X] T006 [P] Create empty package modules `src/entrepataseturnos_mcp/api/__init__.py`, `src/entrepataseturnos_mcp/auth/__init__.py` and `src/entrepataseturnos_mcp/tools/__init__.py`.
   - Also create empty `__init__.py` files in `tests/unit/`, `tests/auth/`, `tests/tools/`, `tests/contract/` and `tests/integration/`.
 
 ---
@@ -75,15 +75,15 @@ confirmation, crypto, Redis storage, app composition and test fixtures.
 
 ### Tests for Foundational
 
-- [ ] T007 [P] Write `tests/unit/test_config.py`.
+- [X] T007 [P] Write `tests/unit/test_config.py`.
   - Loading succeeds with every required `MCP_*` variable set.
   - Each missing required variable makes loading fail with a message that names the variable.
   - `repr(settings)` and the error output never contain the values of `MCP_GOOGLE_CLIENT_SECRET`, `MCP_REDIS_URL` or `MCP_TOKEN_ENCRYPTION_KEY`.
   - `MCP_PUBLIC_BASE_URL` must use https, except for `http://localhost`.
   - `MCP_TOKEN_ENCRYPTION_KEY` must decode to 32 bytes.
-- [ ] T008 [P] Write `tests/unit/test_logging.py`. The JSON formatter must replace these keys with `"[REDACTED]"`, case-insensitively, including in nested dicts and in `extra=`:
+- [X] T008 [P] Write `tests/unit/test_logging.py`. The JSON formatter must replace these keys with `"[REDACTED]"`, case-insensitively, including in nested dicts and in `extra=`:
   - `authorization`, `password`, `cpf`, `idToken`, `code`, `secret`, and any key containing `token`.
-- [ ] T009 [P] Write `tests/unit/test_api_client.py`, using respx.
+- [X] T009 [P] Write `tests/unit/test_api_client.py`, using respx.
   - Every request goes to `MCP_API_BASE_URL` with an `X-Correlation-Id` header.
   - A bearer token is attached only when one is passed in.
   - A GET is retried exactly once on `httpx.ConnectError`. A POST, PUT or DELETE is never retried.
@@ -92,63 +92,63 @@ confirmation, crypto, Redis storage, app composition and test fixtures.
   - `{fields}` and extra keys such as `petIds` and `petId` are kept on the error.
   - A non-JSON error body raises `ApiError("upstream_unavailable")` for 5xx, and `upstream_invalid_response` otherwise.
   - A 2xx with malformed JSON raises `upstream_invalid_response`.
-- [ ] T010 [P] Write `tests/unit/test_tool_errors.py`. `to_tool_error()` produces the DM §5 payload: `error_code`, `message` and `http_status`, plus `fields` and `details` only when they are non-empty. The `petIds` and `petId` extras are mapped to `details.pet_ids` and `details.pet_id`.
-- [ ] T011 [P] Write `tests/unit/test_models_common.py`.
+- [X] T010 [P] Write `tests/unit/test_tool_errors.py`. `to_tool_error()` produces the DM §5 payload: `error_code`, `message` and `http_status`, plus `fields` and `details` only when they are non-empty. The `petIds` and `petId` extras are mapped to `details.pet_ids` and `details.pet_id`.
+- [X] T011 [P] Write `tests/unit/test_models_common.py`.
   - `OffsetDateTime` accepts `2026-12-01T14:00:00-03:00` and rejects `2026-12-01T14:00:00`.
   - `LocalDate` accepts only `YYYY-MM-DD`.
   - `PositiveId` rejects 0.
   - `Page` rejects `size` 0 or 101 and `page` -1.
   - `StrictInput` (`extra="forbid"`) rejects `user_id`, `owner_id`, `account_id` and `role`.
-- [ ] T012 [P] Write `tests/unit/test_confirm.py`.
+- [X] T012 [P] Write `tests/unit/test_confirm.py`.
   - With an elicitation-capable context: an accepted `confirm=true` lets the call proceed; decline, cancel or `confirm=false` raises a `cancelled_by_user` `ToolError`.
   - Without elicitation support: `user_confirmed=True` proceeds; missing or false raises `confirmation_required`, and the payload's `details.summary` lists the fields shown to the user.
-- [ ] T013 [P] Write `tests/unit/test_crypto.py`.
+- [X] T013 [P] Write `tests/unit/test_crypto.py`.
   - Encrypting and then decrypting with AES-GCM returns the original value.
   - Tampered ciphertext fails.
   - Two encryptions of the same value differ (random nonce).
   - `hash_token()` returns the hex SHA-256, and the result does not contain the token itself.
-- [ ] T014 [P] Write `tests/unit/test_store.py`, using fakeredis.
+- [X] T014 [P] Write `tests/unit/test_store.py`, using fakeredis.
   - Each repository from DM §2 saves, loads and deletes its records under the `epet:mcp:` prefix with the documented TTLs.
   - `consume_pending()` and `consume_code()` are single-use: a second call returns None.
   - The token index set collects every token hash for a session, and `delete_session_cascade()` removes them all.
 
 ### Implementation for Foundational
 
-- [ ] T015 [P] Implement `Settings` in `src/entrepataseturnos_mcp/config.py`, following DM §1.
+- [X] T015 [P] Implement `Settings` in `src/entrepataseturnos_mcp/config.py`, following DM §1.
   - Use pydantic-settings with `env_prefix="MCP_"` and `SecretStr` for secrets.
   - Validate the https rule and the 32-byte key.
   - Add `load_settings()`. On failure it writes `missing/invalid setting: MCP_X` lines to stderr, with no values, and calls `SystemExit(2)`.
-- [ ] T016 [P] Implement the JSON log formatter and the recursive redaction filter in `src/entrepataseturnos_mcp/logging.py`.
+- [X] T016 [P] Implement the JSON log formatter and the recursive redaction filter in `src/entrepataseturnos_mcp/logging.py`.
   - `configure_logging(level)` installs them on the root logger.
   - It also sets the uvicorn access log to omit query strings, because OAuth `code` and `state` appear there.
-- [ ] T017 [P] Implement the exceptions in `src/entrepataseturnos_mcp/api/errors.py`: `ApiError(code, message, status, fields, extras)`, `UpstreamTimeout`, `OutcomeUnknown` and `UpstreamUnavailable`.
-- [ ] T018 Implement `ApiClient` in `src/entrepataseturnos_mcp/api/client.py` (depends on T015 and T017).
+- [X] T017 [P] Implement the exceptions in `src/entrepataseturnos_mcp/api/errors.py`: `ApiError(code, message, status, fields, extras)`, `UpstreamTimeout`, `OutcomeUnknown` and `UpstreamUnavailable`.
+- [X] T018 Implement `ApiClient` in `src/entrepataseturnos_mcp/api/client.py` (depends on T015 and T017).
   - It wraps a single `httpx.AsyncClient` with `base_url`, `Timeout(connect=3, read=settings.api_timeout_seconds, write=10, pool=5)` and `Limits(max_connections=20)`.
   - It has private `_get`, `_post`, `_put` and `_delete` methods that take a path, a bearer token, JSON or params, and a `write` flag. These enforce the retry and timeout rules from R5 and the error mapping from T009.
   - Paths must start with `/v1/`; anything else is an assertion error.
   - There is **no** public generic request method (FR-002).
   - It logs the method, the path template, the status and the duration, and never logs bodies.
-- [ ] T019 [P] Implement `to_tool_error(exc) -> ToolError` in `src/entrepataseturnos_mcp/tools/errors.py`. It handles `ApiError`, `UpstreamTimeout`, `OutcomeUnknown`, `UpstreamUnavailable` and pydantic `ValidationError` (which becomes `validation_error` with `fields`), following DM §5. It returns a JSON string payload.
-- [ ] T020 [P] Implement the shared types in `src/entrepataseturnos_mcp/tools/models.py`.
+- [X] T019 [P] Implement `to_tool_error(exc) -> ToolError` in `src/entrepataseturnos_mcp/tools/errors.py`. It handles `ApiError`, `UpstreamTimeout`, `OutcomeUnknown`, `UpstreamUnavailable` and pydantic `ValidationError` (which becomes `validation_error` with `fields`), following DM §5. It returns a JSON string payload.
+- [X] T020 [P] Implement the shared types in `src/entrepataseturnos_mcp/tools/models.py`.
   - The types are `StrictInput` (base model with `extra="forbid"`), `OffsetDateTime` (an aware `datetime` validator that rejects naive values), `LocalDate`, `PositiveId`, `Page` (page ≥ 0, size 1–100) and `PageInfo` (output).
   - Add the helper `not_in_past(dt)`.
-- [ ] T021 [P] Implement `require_confirmation(ctx, summary: dict, user_confirmed: bool | None)` in `src/entrepataseturnos_mcp/tools/confirm.py`, following R8.
+- [X] T021 [P] Implement `require_confirmation(ctx, summary: dict, user_confirmed: bool | None)` in `src/entrepataseturnos_mcp/tools/confirm.py`, following R8.
   - Use `ctx.elicit()` with a `confirm: bool` schema when the client's capabilities include elicitation.
   - Otherwise use the `user_confirmed` fallback.
   - Raise a `ToolError` with `cancelled_by_user` or `confirmation_required`.
-- [ ] T022 [P] Implement `encrypt`, `decrypt` and `hash_token` (AES-256-GCM with a 12-byte random nonce, key from settings) in `src/entrepataseturnos_mcp/auth/crypto.py`.
-- [ ] T023 Implement the async Redis repositories in `src/entrepataseturnos_mcp/auth/store.py`, following DM §2 (depends on T022).
+- [X] T022 [P] Implement `encrypt`, `decrypt` and `hash_token` (AES-256-GCM with a 12-byte random nonce, key from settings) in `src/entrepataseturnos_mcp/auth/crypto.py`.
+- [X] T023 Implement the async Redis repositories in `src/entrepataseturnos_mcp/auth/store.py`, following DM §2 (depends on T022).
   - The repositories are `SessionRepo` (with encrypted token fields), `ClientRepo`, `PendingRepo`, `CodeRepo`, `AccessTokenRepo`, `RefreshTokenRepo` and the token index.
   - Add `acquire_refresh_lock`, `release_refresh_lock` and `delete_session_cascade`.
   - A Redis connection error raises `SessionStoreUnavailable`.
-- [ ] T024 Implement the app skeleton in `src/entrepataseturnos_mcp/servers.py` and `src/entrepataseturnos_mcp/app.py`.
+- [X] T024 Implement the app skeleton in `src/entrepataseturnos_mcp/servers.py` and `src/entrepataseturnos_mcp/app.py`.
   - `servers.py`: `build_authenticated_server(provider, settings)` and `build_public_server()` return `MCPServer` instances. Tools are registered later by the story tasks.
   - `app.py`: `create_app(settings)` builds one Starlette app.
     - Mount the authenticated server's `streamable_http_app(stateless_http=True, json_response=True)` at `/mcp`, and the public one at `/public/mcp`.
     - Its lifespan opens the `ApiClient` and the Redis client, and runs both session managers.
     - Shared resources are available to tools through the lifespan context.
-- [ ] T025 Implement `main()` in `src/entrepataseturnos_mcp/__main__.py`: `load_settings()`, then `configure_logging()`, then `uvicorn.run(create_app(settings), host=settings.host, port=settings.port, proxy_headers=True)`.
-- [ ] T026 Create the shared fixtures in `tests/conftest.py`.
+- [X] T025 Implement `main()` in `src/entrepataseturnos_mcp/__main__.py`: `load_settings()`, then `configure_logging()`, then `uvicorn.run(create_app(settings), host=settings.host, port=settings.port, proxy_headers=True)`.
+- [X] T026 Create the shared fixtures in `tests/conftest.py`.
   - `settings` (test values; the API URL is `http://api.test`) and `respx_api`, a respx router scoped to the API base URL.
   - `redis` (fakeredis async) and `app` (from `create_app`, with fakeredis injected).
   - `signed_in_session`: seeds a `SessionRepo` record (user 42, valid API token `api-at-1`) and an MCP access token. It returns the bearer value.
@@ -169,26 +169,26 @@ client except the opaque MCP token. See quickstart §3, steps 1–2, 9 and 10.
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T027 [P] [US5] Write `tests/auth/test_provider.py`.
+- [X] T027 [P] [US5] Write `tests/auth/test_provider.py`.
   - Dynamic client registration stores the client.
   - `authorize()` stores a pending authorization (with a 600 s TTL) and returns a Google authorize URL that carries `client_id=MCP_GOOGLE_CLIENT_ID`, the redirect `{MCP_PUBLIC_BASE_URL}/oauth/google/callback`, `scope=openid email profile`, `code_challenge_method=S256` and `state`.
   - `exchange_authorization_code()` issues opaque access and refresh tokens and stores only their hashes. A reused code fails.
   - `load_access_token()` resolves the session.
   - `exchange_refresh_token()` rotates the refresh token.
   - `revoke_token()` calls `DELETE /v1/auth/sessions/{id}` and cascades the deletion.
-- [ ] T028 [P] [US5] Write `tests/auth/test_google_callback.py`, using respx for the Google token endpoint and the API.
+- [X] T028 [P] [US5] Write `tests/auth/test_google_callback.py`, using respx for the Google token endpoint and the API.
   - **Success**: exactly one call to `POST /v1/auth/sessions/google` with body `{idToken, deviceName:"EntrePatasETurnos MCP"}`, a stored session record whose tokens are encrypted, and a 302 to the client's `redirect_uri` with `code` and the client's `state`.
   - **API errors**: 409 `account_link_required`, 403 `account_unavailable`, 401 `invalid_assertion` and 503 `provider_unavailable` each produce a 302 to the client with `error` and an `error_description` that contains the API code. No session is stored.
   - **Unknown or expired state** produces a 400.
   - **Google token exchange failure** produces a 302 with `error=server_error`.
-- [ ] T029 [P] [US5] Write `tests/auth/test_session_refresh.py`.
+- [X] T029 [P] [US5] Write `tests/auth/test_session_refresh.py`.
   - `api_token()` returns the stored token when it expires more than 60 s from now, and makes no API call.
   - When it expires within 60 s: one call to `POST /v1/auth/sessions/{id}/refresh {refreshToken}`, and the rotated tokens are stored encrypted.
   - Two concurrent calls produce exactly one refresh call (lock).
   - A 409 `refresh_in_progress` is retried once.
   - A 401 `invalid_refresh_token` deletes the session cascade and raises `sign_in_required`.
   - An unavailable Redis raises `session_store_unavailable`.
-- [ ] T030 [P] [US5] Write `tests/integration/test_mcp_auth.py`.
+- [X] T030 [P] [US5] Write `tests/integration/test_mcp_auth.py`.
   - `POST /mcp` without a bearer, or with an unknown one, returns 401 with a `WWW-Authenticate` header that references the protected-resource metadata.
   - `/.well-known/oauth-authorization-server` advertises `/authorize`, `/token`, `/register` and `/revoke` under the issuer.
   - The `sign_out` tool calls `DELETE /v1/auth/sessions/{id}`, returns `{signed_out:true}`, and the next call with the same bearer returns 401.
@@ -197,28 +197,28 @@ client except the opaque MCP token. See quickstart §3, steps 1–2, 9 and 10.
 
 ### Implementation for User Story 5
 
-- [ ] T031 [P] [US5] Implement the session API calls in `src/entrepataseturnos_mcp/api/auth.py`: `create_google_session(id_token)` (`POST /v1/auth/sessions/google`), `refresh_session(session_id, refresh_token)` (`POST /v1/auth/sessions/{id}/refresh`) and `delete_session(session_id, access_token)` (`DELETE /v1/auth/sessions/{id}`). Each returns a typed `SessionTokens` model.
-- [ ] T032 [P] [US5] Implement the Google helpers in `src/entrepataseturnos_mcp/auth/google.py`.
+- [X] T031 [P] [US5] Implement the session API calls in `src/entrepataseturnos_mcp/api/auth.py`: `create_google_session(id_token)` (`POST /v1/auth/sessions/google`), `refresh_session(session_id, refresh_token)` (`POST /v1/auth/sessions/{id}/refresh`) and `delete_session(session_id, access_token)` (`DELETE /v1/auth/sessions/{id}`). Each returns a typed `SessionTokens` model.
+- [X] T032 [P] [US5] Implement the Google helpers in `src/entrepataseturnos_mcp/auth/google.py`.
   - `build_authorize_url(state, code_challenge)` uses `https://accounts.google.com/o/oauth2/v2/auth`.
   - `exchange_code(code, code_verifier)` calls `https://oauth2.googleapis.com/token` with the client id and secret through its own `httpx.AsyncClient` with a 10 s timeout, and returns the `id_token`.
   - Implement the PKCE pair generator.
-- [ ] T033 [US5] Implement `SessionService` in `src/entrepataseturnos_mcp/auth/session.py` (depends on T023 and T031).
+- [X] T033 [US5] Implement `SessionService` in `src/entrepataseturnos_mcp/auth/session.py` (depends on T023 and T031).
   - `api_token(sid)` implements the refresh, lock and retry rules from R3 step 7 and T029.
   - `sign_out(sid)` calls `delete_session` and then `delete_session_cascade`. It cascades even when the API call fails, and logs the failure.
   - Add the helper `current_session_id(ctx)`, which reads the session id from the SDK's `get_access_token()`. Tools must never take identity from their arguments.
-- [ ] T034 [US5] Implement `RedisOAuthProvider(OAuthAuthorizationServerProvider)` in `src/entrepataseturnos_mcp/auth/provider.py`. It must implement these methods (depends on T023, T032 and T033):
+- [X] T034 [US5] Implement `RedisOAuthProvider(OAuthAuthorizationServerProvider)` in `src/entrepataseturnos_mcp/auth/provider.py`. It must implement these methods (depends on T023, T032 and T033):
   - `get_client`, `register_client` and `authorize`. `authorize` creates the pending authorization with the Google PKCE verifier and returns the Google URL.
   - `load_authorization_code` and `exchange_authorization_code`.
   - `load_refresh_token` and `exchange_refresh_token`.
   - `load_access_token` and `revoke_token`.
-- [ ] T035 [US5] Implement the custom route `GET /oauth/google/callback` in `src/entrepataseturnos_mcp/auth/google.py`, following http-endpoints.md (depends on T034).
+- [X] T035 [US5] Implement the custom route `GET /oauth/google/callback` in `src/entrepataseturnos_mcp/auth/google.py`, following http-endpoints.md (depends on T034).
   - Consume the pending authorization, exchange the code with Google, and call `create_google_session`.
   - Store the session, issue the MCP code, and redirect to the client.
   - Map errors as tested in T028. Never log `code`, `state` or tokens.
-- [ ] T036 [US5] Implement the `sign_out` tool in `src/entrepataseturnos_mcp/tools/account.py`.
+- [X] T036 [US5] Implement the `sign_out` tool in `src/entrepataseturnos_mcp/tools/account.py`.
   - It takes no inputs and has annotations `readOnlyHint=false`.
   - It calls `require_confirmation` with the summary "sign out of EntrePatasETurnos" and then `SessionService.sign_out`.
-- [ ] T037 [US5] Wire the auth into `src/entrepataseturnos_mcp/servers.py` and `src/entrepataseturnos_mcp/app.py`.
+- [X] T037 [US5] Wire the auth into `src/entrepataseturnos_mcp/servers.py` and `src/entrepataseturnos_mcp/app.py`.
   - Set `AuthSettings(issuer_url=MCP_PUBLIC_BASE_URL, resource_server_url={MCP_PUBLIC_BASE_URL}/mcp, client_registration_options=ClientRegistrationOptions(enabled=True), revocation_options=RevocationOptions(enabled=True))`.
   - Pass `auth_server_provider=RedisOAuthProvider(...)`.
   - Register the callback route and the `sign_out` tool.
@@ -239,19 +239,19 @@ booking is never sent, and the booking appears in `list_my_accommodation_booking
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T038 [P] [US1] Write `tests/tools/test_pets.py` for `list_my_pets`.
+- [X] T038 [P] [US1] Write `tests/tools/test_pets.py` for `list_my_pets`.
   - **Valid**: calls `GET /v1/pets?page=0&size=20` with `Authorization: Bearer api-at-1`, and returns `PetSummary` items without `_links`, `photos` or timestamps.
   - **Invalid**: `size=101` returns `validation_error`, and the API is not called.
   - **API errors**: 401 followed by a failed refresh returns `sign_in_required`; a 5xx returns `upstream_unavailable`; a timeout returns `upstream_timeout`.
   - **Authorization**: no bearer is rejected; a `user_id` argument is rejected.
-- [ ] T039 [P] [US1] Write `tests/tools/test_accommodation.py`. Cover each of the seven accommodation tools from mcp-tools.md with the four required categories:
+- [X] T039 [P] [US1] Write `tests/tools/test_accommodation.py`. Cover each of the seven accommodation tools from mcp-tools.md with the four required categories:
   - **Valid**: the exact method, path, query and body (`petIds`, `checkIn`, `checkOut` with offsets preserved) are sent, and the output is trimmed per DM §4.
   - **Invalid**: naive datetimes; `check_out ≤ check_in`; `check_in` in the past; 0 or 51 pets; duplicate pet ids; `nights` 91; a range longer than 366 days; an unknown `status`. In each case the API is not called.
   - **API errors**, each passed through with its code: `400 invalid_request` with `fields.petIds`; `409 pet_already_booked` with `details.pet_ids`; `409 insufficient_capacity`; `409 invalid_status_transition`; `404 booking_not_found`; `503 capacity_not_configured`. In none of these cases does the tool report success.
   - **Authorization**: no bearer; an `owner_id` argument is rejected; a foreign pet's 400 is passed through.
   - **Confirmation**: create, update and cancel with elicitation declined return `cancelled_by_user` with zero API calls. Without elicitation and without `user_confirmed`, they return `confirmation_required` with zero API calls.
   - **Write timeout**: returns `outcome_unknown`.
-- [ ] T040 [P] [US1] Write `tests/contract/test_accommodation_contract.py`. Every API request made by the pets and accommodation tools must use one of these method and path pairs, and nothing else:
+- [X] T040 [P] [US1] Write `tests/contract/test_accommodation_contract.py`. Every API request made by the pets and accommodation tools must use one of these method and path pairs, and nothing else:
   - `GET /v1/pets`
   - `GET /v1/accommodation-bookings/free-dates`
   - `GET /v1/accommodation-bookings/availability`
@@ -261,8 +261,8 @@ booking is never sent, and the booking appears in `list_my_accommodation_booking
 
 ### Implementation for User Story 1
 
-- [ ] T041 [P] [US1] Implement `list_pets(token, page, size)` (`GET /v1/pets`) in `src/entrepataseturnos_mcp/api/pets.py`.
-- [ ] T042 [P] [US1] Implement the booking API calls in `src/entrepataseturnos_mcp/api/bookings.py`:
+- [X] T041 [P] [US1] Implement `list_pets(token, page, size)` (`GET /v1/pets`) in `src/entrepataseturnos_mcp/api/pets.py`.
+- [X] T042 [P] [US1] Implement the booking API calls in `src/entrepataseturnos_mcp/api/bookings.py`:
   - `free_dates(token, from_date, to_date, pets, nights)`
   - `availability(token, from_, to)`
   - `create(token, pet_ids, check_in, check_out)`
@@ -272,17 +272,17 @@ booking is never sent, and the booking appears in `list_my_accommodation_booking
   - `delete(token, booking_id)`
 
   Datetimes are serialized in ISO-8601 with their offset kept.
-- [ ] T043 [US1] Implement `list_my_pets` in `src/entrepataseturnos_mcp/tools/pets.py` (depends on T033 and T041).
+- [X] T043 [US1] Implement `list_my_pets` in `src/entrepataseturnos_mcp/tools/pets.py` (depends on T033 and T041).
   - Define the `ListPetsInput` and `PetSummary` models there.
   - The description says the tool is read-only, with `readOnlyHint=true`.
-- [ ] T044 [US1] Implement the seven accommodation tools in `src/entrepataseturnos_mcp/tools/accommodation.py`, following mcp-tools.md (depends on T020, T021, T033 and T042).
+- [X] T044 [US1] Implement the seven accommodation tools in `src/entrepataseturnos_mcp/tools/accommodation.py`, following mcp-tools.md (depends on T020, T021, T033 and T042).
   - Define the domain models there: `FreeDatesInput`, `AvailabilityInput`, `BookingInput`, `BookingUpdateInput`, `BookingListInput`, `BookingRefInput`, `FreeDates`, `Availability`, `Booking` and `BookingPage`.
   - Validators follow DM §3.
   - Write tools call `require_confirmation` with a summary of pet names, check-in, check-out and nights before calling the API.
   - Descriptions state the write and confirmation rules.
   - Cancel has `destructiveHint=true`.
   - Errors go through `to_tool_error`.
-- [ ] T045 [US1] Register `list_my_pets` and the seven accommodation tools on the authenticated server in `src/entrepataseturnos_mcp/servers.py`.
+- [X] T045 [US1] Register `list_my_pets` and the seven accommodation tools on the authenticated server in `src/entrepataseturnos_mcp/servers.py`.
 
 **Checkpoint**: The MVP works: sign-in plus accommodation booking. T038–T040 pass.
 

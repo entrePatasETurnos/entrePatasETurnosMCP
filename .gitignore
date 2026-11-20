@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets / local config
+.env
+.env.*
+!.env.example
+*.secret.yaml
+secrets/
+*.key
+*.crt
+kubeconfig*
+.kube/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
