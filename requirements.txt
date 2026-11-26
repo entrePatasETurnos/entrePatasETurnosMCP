@@ -1,0 +1,18 @@
+# Runtime dependencies for the entrePatasETurnos MCP server.
+# Install with:  pip install -r requirements.txt
+
+# The official MCP Python SDK: the FastMCP server, tool decorators, and the
+# streamable-HTTP transport. It pulls in starlette and anyio itself.
+mcp==2.3.0
+
+# HTTP client the server uses to call the entrePatasETurnos API.
+httpx==0.28.1
+
+# ASGI server that serves the MCP app over HTTP (what runs inside Docker).
+uvicorn==0.54.0
+
+# Reads MCP_* settings from environment variables, with validation.
+pydantic-settings==2.16.3
+
+# Loads .env into the environment when you run the server locally.
+python-dotenv==1.2.4
